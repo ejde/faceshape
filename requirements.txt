@@ -1,7 +1,6 @@
 streamlit
 opencv-python
 dlib
-face-recognition
 git+https://github.com/ageitgey/face_recognition_models
 imutils
 numpy
