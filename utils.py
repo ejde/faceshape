@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+# todo: encapsulate all this functionality in a class
 def visualize_landmarks(image, landmarks):
     plt.figure(figsize=(8, 8))
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
@@ -22,7 +23,7 @@ def are_measurements_approximately_equal(*args):
 
 # Function to calculate the key facial landmarks used for both analysis and drawing
 def calculate_face_landmarks(landmarks):
-    jaw_points = landmarks[4:13]
+    jaw_points = landmarks[4:13] #4:13
 
     # Calculate the midpoint between jawline point and outer eye corner
     left_cheekbone = (
@@ -54,7 +55,8 @@ def calculate_face_landmarks(landmarks):
     }
 
 # Function to analyze the face shape based on the calculated landmarks
-def analyze_face_shape(jaw_width, cheekbone_width, forehead_width, face_length):
+# todo: clean up the logic, add more features to assess
+def classify_shape(jaw_width, cheekbone_width, forehead_width, face_length):
     matches = []
 
     if forehead_width > cheekbone_width and is_approximately_equal(cheekbone_width, jaw_width):

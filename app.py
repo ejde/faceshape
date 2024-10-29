@@ -51,7 +51,7 @@ def process_image(image_data):
             df = pd.DataFrame(data)
             st.table(df)
             
-            matches = utils.analyze_face_shape(jawline_width, cheekbone_width, forehead_width, face_length)
+            matches = utils.classify_face(jawline_width, cheekbone_width, forehead_width, face_length)
             st.markdown('#### Possible Face Shapes')
             for shape, reason in matches:
                 st.write(f"Detected Face Shape: {shape}, Reason: {reason}")
@@ -120,7 +120,8 @@ elif camera_image is not None:
 else:
     st.write("Please upload an image or take a photo using the camera.")
 
-# Clear the session state when switching between the inputs
 if st.button("Reset"):
-    st.session_state.image_processed = False
-    st.session_state.input_type = None
+    # Clear the session state and force a rerun of the app to reset everything
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    st.experimental_set_query_params()
