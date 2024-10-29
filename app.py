@@ -3,9 +3,7 @@ import cv2
 import numpy as np
 import dlib
 from imutils import face_utils
-import face_recognition
 
-# Load pre-trained facial landmark detector
 # Load pre-trained facial landmark detector globally
 @st.cache_resource
 def load_model():
@@ -68,7 +66,6 @@ st.title("Face Shape Detector")
 
 # Webcam Capture
 st.subheader("Take a picture to analyze your face shape:")
-run = st.checkbox('Run Camera')
 camera = st.camera_input("Capture Image")
 
 if camera:
