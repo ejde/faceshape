@@ -5,7 +5,7 @@ import dlib
 from imutils import face_utils
 from PIL import Image
 import pandas as pd
-import utils
+from face import Face
 
 # Load the hairstyle recommendation image
 @st.cache_resource
@@ -34,23 +34,25 @@ def process_image(image_data):
             shape = face_utils.shape_to_np(shape)
 
             # Display image with landmarks
-            jawline_width, cheekbone_width, forehead_width, face_length = utils.measure_face(img, shape)
+            f = Face(img, shape)
+            jawline_width, cheekbone_width, forehead_width, face_length, face_width_length_ratio = f.measure_face()
             st.markdown('#### Measurements')
             st.image(img, channels="BGR", caption="Detected facial features with lines")
             data = {
-                "Feature": ["Jawline Width", "Cheekbone Width", "Forehead Width", "Face Length"],
+                "Feature": ["Jawline Width", "Cheekbone Width", "Forehead Width", "Face Length", "Width-Length Ratio"],
                 "Measurement (pixels)": [
                     f"{jawline_width:.2f}", 
                     f"{cheekbone_width:.2f}", 
                     f"{forehead_width:.2f}", 
-                    f"{face_length:.2f}"
+                    f"{face_length:.2f}",
+                    f"{face_width_length_ratio:.2f}"
                 ]
             }
 
             df = pd.DataFrame(data)
             st.table(df)
             
-            matches = utils.classify_face(jawline_width, cheekbone_width, forehead_width, face_length)
+            matches = f.classify_face()
             st.markdown('#### Possible Face Shapes')
             for shape, reason in matches:
                 st.write(f"Detected Face Shape: {shape}, Reason: {reason}")
