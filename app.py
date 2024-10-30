@@ -1,6 +1,6 @@
 import streamlit as st
-import cv2
 import numpy as np
+import cv2
 import dlib
 from imutils import face_utils
 from PIL import Image
@@ -26,12 +26,11 @@ def process_image(image_data):
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # Convert to BGR for OpenCV
     
     # Detect face landmarks
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    rects = detector(gray, 0)
+    rects = detector(img, 0)
 
     if len(rects) > 0:
         for rect in rects:
-            shape = predictor(gray, rect)
+            shape = predictor(img, rect)
             shape = face_utils.shape_to_np(shape)
 
             # Display image with landmarks
