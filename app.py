@@ -82,10 +82,8 @@ def show_recommended_styles(face_shape):
 st.title("Face Shape Detector")
 
 # Initialize session state to keep track of the input type (file or camera)
-if "input_type" not in st.session_state:
-    st.session_state.input_type = None
-if "image_processed" not in st.session_state:
-    st.session_state.image_processed = False
+st.session_state.input_type = None
+st.session_state.image_processed = False
 
 st.subheader("Upload an image or take a photo")
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])

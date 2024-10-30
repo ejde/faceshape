@@ -39,11 +39,13 @@ def calculate_face_landmarks(landmarks):
     chin = landmarks[8]
 
     # Estimated forehead points (using vertical shift)
-    vertical_shift = (landmarks[27][1] - landmarks[8][1]) * 0.25  # Adjust the multiplier as needed
-    forehead_left = (landmarks[17][0], landmarks[17][1] + vertical_shift)
-    forehead_right = (landmarks[26][0], landmarks[26][1] + vertical_shift)
-    forehead_top = (landmarks[27][0], landmarks[27][1] + vertical_shift)
-
+    vertical_shift = (landmarks[8][1] - landmarks[27][1] ) * 0.25  # Adjust the multiplier as needed
+    forehead_left = (landmarks[17][0], landmarks[17][1] - vertical_shift)
+    forehead_right = (landmarks[26][0], landmarks[26][1] - vertical_shift)
+    forehead_top = (
+        landmarks[27][0],
+        (forehead_left[1] + forehead_right[1]) / 2
+    )
     return {
         "jaw_points": jaw_points,
         "left_cheekbone": left_cheekbone,
