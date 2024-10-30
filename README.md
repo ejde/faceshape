@@ -48,9 +48,12 @@ The following Python packages are required and listed in `requirements.txt`:
 - `streamlit`
 - `opencv-python`
 - `pillow`
-- `face-alignment`
+- `dlib`
 - `numpy`
 - `pandas`
+- `imutils`
+- `cv2`
+- `matplotlib`
 
 To install them manually, run:
 \```bash

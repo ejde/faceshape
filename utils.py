@@ -56,7 +56,7 @@ def calculate_face_landmarks(landmarks):
 
 # Function to analyze the face shape based on the calculated landmarks
 # todo: clean up the logic, add more features to assess
-def classify_shape(jaw_width, cheekbone_width, forehead_width, face_length):
+def classify_face(jaw_width, cheekbone_width, forehead_width, face_length):
     matches = []
 
     if forehead_width > cheekbone_width and is_approximately_equal(cheekbone_width, jaw_width):
