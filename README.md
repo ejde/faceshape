@@ -1,6 +1,6 @@
 # Face Shape and Hairstyle Recommendation App
 
-This Streamlit app allows users to determine their face shape using a camera or uploaded image, and provides relevant measurements (e.g., jawline width, cheekbone width, forehead width, face length). Users can either upload an image or take a photo using their webcam. The app also provides a reset button to clear previous inputs and results for a fresh start.
+This Streamlit app allows users to (naively) determine their face shape using a camera or uploaded image, and provides relevant measurements (e.g., jawline width, cheekbone width, forehead width, face length). Users can either upload an image or take a photo using their webcam. The app also provides a reset button to clear previous inputs and results for a fresh start.
 
 ## Features
 

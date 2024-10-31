@@ -35,17 +35,18 @@ def process_image(image_data):
 
             # Display image with landmarks
             f = Face(img, shape)
-            jawline_width, cheekbone_width, forehead_width, face_length, face_width_length_ratio = f.measure_face()
+            jawline_width, cheekbone_width, forehead_width, face_length, face_width_length_ratio, jawline_angle = f.measure_face()
             st.markdown('#### Measurements')
             st.image(img, channels="BGR", caption="Detected facial features with lines")
             data = {
-                "Feature": ["Jawline Width", "Cheekbone Width", "Forehead Width", "Face Length", "Width-Length Ratio"],
+                "Feature": ["Jawline Width", "Cheekbone Width", "Forehead Width", "Face Length", "Width-Length Ratio", "Jawline Angle"],
                 "Measurement (pixels)": [
                     f"{jawline_width:.2f}", 
                     f"{cheekbone_width:.2f}", 
                     f"{forehead_width:.2f}", 
                     f"{face_length:.2f}",
-                    f"{face_width_length_ratio:.2f}"
+                    f"{face_width_length_ratio:.2f}",
+                    f"{jawline_angle:.2f}"
                 ]
             }
 

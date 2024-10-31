@@ -17,7 +17,7 @@ class Face():
         self.forehead_right = self.face_landmarks['forehead_right']
         self.forehead_top = self.face_landmarks['forehead_top']
 
-        self.jaw_width = self.euclidean_distance(self.jaw_points[0], self.jaw_points[-1])
+        self.jaw_width = self.euclidean_distance(self.jaw_points[0], self.jaw_points[-1]) * 0.90
         self.cheekbone_width = self.euclidean_distance(self.left_cheekbone, self.right_cheekbone)
         self.forehead_width = self.euclidean_distance(self.forehead_left, self.forehead_right)
         self.face_length = self.euclidean_distance(self.forehead_top, self.chin)
@@ -36,12 +36,6 @@ class Face():
 
     def euclidean_distance(self, p1, p2):
         return np.linalg.norm(np.array(p1) - np.array(p2))
-
-    def is_approximately_equal(self, a, b, tolerance=0.10):
-        return abs(a - b) <= tolerance * max(abs(a), abs(b))
-
-    def are_measurements_approximately_equal(self, *args):
-        return all(self.is_approximately_equal(a, args[0]) for a in args[1:])
 
     def calculate_jawline_angle(self):
         # Calculate vectors along the left and right jawlines
@@ -98,37 +92,53 @@ class Face():
     def classify_face(self):
         matches = []
 
-        if self.forehead_width > self.cheekbone_width and self.is_approximately_equal(self.cheekbone_width, self.jaw_width) and self.face_width_length_ratio < 0.8:
-            matches.append(("Heart", "Forehead is wider than cheekbones and jawline, with a longer face."))
-    
-        if self.is_approximately_equal(self.cheekbone_width, self.face_length) and self.cheekbone_width > self.jaw_width:
-            matches.append(("Diamond", "Cheekbones are the widest part of the face."))
+        def is_approximately_equal(a, b, tolerance=0.10):
+            return abs(a - b) <= tolerance * max(abs(a), abs(b))
 
-        if self.jaw_width > self.cheekbone_width and self.cheekbone_width > self.forehead_width:
-            matches.append(("Triangle", "Jawline is wider than cheekbones and forehead."))
-
-        if self.face_length > self.cheekbone_width and self.is_approximately_equal(self.forehead_width, self.jaw_width):
-            matches.append(("Oblong", "Face is longer with similar widths across the face."))
+        def are_measurements_approximately_equal(*args):
+            return all(self.is_approximately_equal(a, args[0]) for a in args[1:])
         
-        if self.forehead_width > self.jaw_width and self.face_width_length_ratio > 0.9:
-            matches.append(("Oval", "Face is longer with decreasing widths across the face."))
+        # Oblong: Face length is significantly longer than other measurements, and forehead, cheekbones, jawline are similar
+        if self.face_length >= 1.2 * max(self.forehead_width, self.cheekbone_width, self.jaw_width):
+            if is_approximately_equal(self.forehead_width, self.cheekbone_width) or is_approximately_equal(self.cheekbone_width, self.jaw_width):
+                matches.append(("Oblong", "Your face length is significantly longer than your other measurements, and your forehead, cheekbones, and jawline are almost equal in size."))
 
-        if self.are_measurements_approximately_equal(self.jaw_width, self.cheekbone_width, self.forehead_width) and self.face_width_length_ratio > 0.9:
-            if self.jawline_angle > 125:
-                matches.append(("Round", "Face is almost as wide as it is long, with a rounded jawline."))
-            else:
-                matches.append(("Square", "Face is almost as wide as it is long, with a strong jawline."))
-    
+        # Square: All measurements are similar, with sharp jawline angles
+        if is_approximately_equal(self.face_length, self.jaw_width) and is_approximately_equal(self.jaw_width, self.forehead_width) and is_approximately_equal(self.forehead_width, self.cheekbone_width) and self.jawline_angle < 116:
+            matches.append(("Square", "Your face, jawline, forehead, and cheekbones are all similar in length. Meanwhile, your jawbone angles are sharp and not curved or round."))
+
+        # Oval: Face is longer than cheekbones, forehead is wider than jawline, and jawline is rounded
+        if self.face_length >= 1.2 * self.cheekbone_width and self.forehead_width >= 1.05 * self.jaw_width and self.jawline_angle >= 116:
+            matches.append(("Oval", "Your face is longer than the width of your cheekbones, and your forehead is wider than your jawline. Meanwhile, your jawline angles are rounded."))
+
+        # Round: Face length and cheekbones are similar, forehead and jawline are similar, jawline is rounded
+        if is_approximately_equal(self.face_length, self.cheekbone_width) and is_approximately_equal(self.forehead_width, self.jaw_width) and self.jawline_angle >= 116:
+            matches.append(("Round", "Your face length and cheekbones are similar, and your forehead and jawline measurements are similar. The jawline has soft, rounded angles."))
+
+        # Diamond: Face length is longest, chin is pointy, measurements decrease from cheekbones to forehead to jawline
+        if self.face_length >= self.cheekbone_width >= self.forehead_width >= self.jaw_width and self.jawline_angle < 116:
+            matches.append(("Diamond", "Your face is the longest measurement, and your chin is pointy. The sizes decrease from cheekbones to forehead to jawline."))
+
+        # Triangular: Jawline is wider than cheekbones, which are wider than forehead
+        if self.jaw_width >= self.cheekbone_width >= self.forehead_width:
+            matches.append(("Triangular", "Your jawline is wider than your cheekbones, which are wider than your forehead."))
+
+        # Heart: Forehead is wider than cheekbones and jawline, chin is pointy
+        if self.forehead_width > self.cheekbone_width and is_approximately_equal(self.cheekbone_width, self.jaw_width) and self.jawline_angle < 116:
+            matches.append(("Heart", "Your forehead is wider than your cheekbones and jawline, and your chin is pointy."))
+
+        # Handle unknown case
         if not matches:
             matches.append(("Unknown", "Unable to classify face shape with the given measurements."))
 
         return matches
 
+
     # Function to draw lines connecting landmarks for facial features and measurements
     def measure_face(self):
         # self.draw_facial_features(image)
         self.draw_measurement_lines(self.image)
-        return self.jaw_width, self.cheekbone_width, self.forehead_width, self.face_length, self.face_width_length_ratio
+        return self.jaw_width, self.cheekbone_width, self.forehead_width, self.face_length, self.face_width_length_ratio, self.jawline_angle
 
     def draw_facial_features(self, image):
         for i in range(len(self.jaw_points)-1):
