@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 
 class Face():
 
@@ -24,15 +23,6 @@ class Face():
         self.face_width = self.euclidean_distance(self.landmarks[0], self.landmarks[16])
         self.face_width_length_ratio = self.face_width / self.face_length
         self.jawline_angle = self.calculate_jawline_angle()
-
-    def visualize_landmarks(self, image, landmarks):
-        plt.figure(figsize=(8, 8))
-        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        for idx, point in enumerate(landmarks):
-            plt.scatter(point[0], point[1], c='yellow', s=10)
-            plt.text(point[0], point[1], str(idx), fontsize=8, color='red')
-        plt.axis('off')
-        plt.show()
 
     def euclidean_distance(self, p1, p2):
         return np.linalg.norm(np.array(p1) - np.array(p2))

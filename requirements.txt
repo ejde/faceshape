@@ -1,8 +1,8 @@
 streamlit
+numpy
 opencv-python
 dlib
-# git+https://github.com/ageitgey/face_recognition_models
 imutils
-numpy
+pillow
 pandas
-matplotlib
+# git+https://github.com/ageitgey/face_recognition_models
